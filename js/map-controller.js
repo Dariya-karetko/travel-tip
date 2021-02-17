@@ -1,9 +1,9 @@
-import { mapService } from './services/map-service.js'
+import { locationService } from './services/map-service.js'
 
 var gMap;
-console.log('Main!');
 
-mapService.getLocs()
+
+locationService.getLocs()
     .then(locs => console.log('locs', locs))
 
 window.onload = () => {
@@ -12,6 +12,12 @@ window.onload = () => {
         console.log('Aha!', ev.target);
         panTo(35.6895, 139.6917);
     })
+
+    document.querySelector('.go-btn').addEventListener('click', () => {
+        userSearch()
+    })
+
+    
 
     initMap()
         .then(() => {
@@ -26,6 +32,17 @@ window.onload = () => {
         .catch(err => {
             console.log('err!!!', err);
         })
+}
+
+function userSearch(){
+    var elInput = document.getElementById('location-txt').value;
+    const prm = locationService.getCoords(elInput);
+    prm.then(pos => {
+        console.log(pos);
+        panTo(pos.lat, pos.lng)
+    })
+    
+    
 }
 
 function initMap(lat = 32.0749831, lng = 34.9120554) {
@@ -66,8 +83,12 @@ function getPosition() {
 
 
 function _connectGoogleApi() {
-    if (window.google) return Promise.resolve()
-    const API_KEY = ''; //TODO: Enter your API Key
+    if (window.google) {
+        return Promise.resolve()
+        
+
+    } 
+    const API_KEY = 'AIzaSyCzmxFNdgIsDvJcfshDzu47wGLhuN20Pvg';
     var elGoogleApi = document.createElement('script');
     elGoogleApi.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}`;
     elGoogleApi.async = true;
